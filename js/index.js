@@ -65,7 +65,27 @@ $(document).on('click', '.editButton', function() {
 $(document).on('click', '.viewButton', function() {
     var index = $(this).attr('name');
     sessionStorage.setItem('num', index);
-    window.location.href = 'guest.html';
+    var username = "";
+    var nameRef = database.ref('lists/' + index + '/');
+    nameRef.on('value', function(snapshot) {
+        username = snapshot.val().listName;
+    });
+    BootstrapDialog.confirm({
+        title: 'WARNING',
+        message: 'You will see who is getting what gifts for ' + username + '! Are you sure you want to proceed?',
+        type: BootstrapDialog.TYPE_WARNING, // <-- Default value is BootstrapDialog.TYPE_PRIMARY
+        closable: true, // <-- Default value is false
+        btnOKLabel: 'Yes!', // <-- Default value is 'OK',
+        btnOKClass: 'btn-warning', // <-- If you didn't specify it, dialog type will be used,
+        callback: function(result) {
+            // result will be true if button was click, while it will be false if users close the dialog directly.
+            if(result) {
+                window.location.href = 'guest.html';
+            }else {
+                // do nothing
+            }
+        }
+    });
 });
 
 function writeListData(name, description, password) {
@@ -76,3 +96,14 @@ function writeListData(name, description, password) {
       itemCount: 0
   });
 }
+
+// bootstrap modal
+BootstrapDialog.DEFAULT_TEXTS[BootstrapDialog.TYPE_DEFAULT] = 'Information';
+BootstrapDialog.DEFAULT_TEXTS[BootstrapDialog.TYPE_INFO] = 'Information';
+BootstrapDialog.DEFAULT_TEXTS[BootstrapDialog.TYPE_PRIMARY] = 'Information';
+BootstrapDialog.DEFAULT_TEXTS[BootstrapDialog.TYPE_SUCCESS] = 'Success';
+BootstrapDialog.DEFAULT_TEXTS[BootstrapDialog.TYPE_WARNING] = 'Warning';
+BootstrapDialog.DEFAULT_TEXTS[BootstrapDialog.TYPE_DANGER] = 'Danger';
+BootstrapDialog.DEFAULT_TEXTS['OK'] = 'OK';
+BootstrapDialog.DEFAULT_TEXTS['CANCEL'] = 'Cancel';
+BootstrapDialog.DEFAULT_TEXTS['CONFIRM'] = 'Confirmation';
