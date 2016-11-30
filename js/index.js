@@ -28,7 +28,7 @@ function loadData() {
 
 function appendList(listRef,index) {
     listRef.on('value', function(snapshot) {
-        $("#listBody").append("<tr><td>" + snapshot.val().listName + "</td><td><p class='help-block'>" + snapshot.val().description + "</p></td><td><button name='list" + index + "' type='button' class='btn btn-info viewButton'>View it</button></td><td><button name='list" + index + "' type='button' class='btn btn-primary editButton'>Edit it</button></td></tr>");
+        $("#listBody").append("<tr><td><h5>" + snapshot.val().listName + "</h5></td><td><p class='help-block'>" + snapshot.val().description + "</p></td><td><button name='list" + index + "' type='button' class='btn btn-info viewButton'>View it</button></td><td><button name='list" + index + "' type='button' class='btn btn-primary editButton'>Edit it</button></td></tr>");
     });
 }
 
@@ -48,7 +48,7 @@ $("#addButton").click(function() {
         description = "None given...";
     }
     if (name !== "" && password !== "") {
-        $("#listBody").append("<tr><td>" + name + "</td><td><p class='help-block'>" + description + "</p></td>" + viewButton + editButton + "</tr>");
+        $("#listBody").append("<tr><td><h5>" + name + "</h5></td><td><p class='help-block'>" + description + "</p></td>" + viewButton + editButton + "</tr>");
         $("#inputListName").val("");
         $("#inputListDescription").val("");
         $("#inputListPassword").val("");

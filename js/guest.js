@@ -27,10 +27,10 @@ function loadData() {
             listRef.on('value', function(snapshot) {
                 if (!snapshot.val().deleted) {
                     if (!snapshot.val().claimed) {
-                        $("#listBody").append("<tr id='" + snapshot.val().itemName.replace(/\s/g, '') + "'><td>" + snapshot.val().rank + "</td><td>" + snapshot.val().itemName + "</td><td><p class='help-block'>" + snapshot.val().description + "</p></td>" + snapshot.val().link + "<td id='" + i + "'><button name='" + i + "' type='button' class='btn btn-primary get-it'>I'll get it</button></td></tr>");
+                        $("#listBody").append("<tr id='" + snapshot.val().itemName.replace(/\s/g, '') + "'><td><p class='help-block'>" + snapshot.val().rank + "</p></td><td>" + snapshot.val().itemName + "</td><td><p class='help-block'>" + snapshot.val().description + "</p></td>" + snapshot.val().link + "<td id='" + i + "'><button name='" + i + "' type='button' class='btn btn-primary get-it'>I'll get it</button></td></tr>");
                     }
                     else {
-                        $("#listBody").append("<tr id='" + snapshot.val().itemName.replace(/\s/g, '') + "'><td>" + snapshot.val().rank + "</td><td>" + snapshot.val().itemName + "</td><td><p class='help-block'>" + snapshot.val().description + "</p></td>" + snapshot.val().link + "<td><p class='text-danger'>" + snapshot.val().claimer + "</p></td></tr>");
+                        $("#listBody").append("<tr id='" + snapshot.val().itemName.replace(/\s/g, '') + "'><td><p class='help-block'>" + snapshot.val().rank + "</p></td><td>" + snapshot.val().itemName + "</td><td><p class='help-block'>" + snapshot.val().description + "</p></td>" + snapshot.val().link + "<td><p class='text-danger'>" + snapshot.val().claimer + "</p></td></tr>");
                     }
                 }
             });
