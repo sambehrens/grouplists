@@ -16,5 +16,14 @@
 }
 
 .inputPanel {
-    padding: 2%;
+    padding: 1.5%;
+}
+#listTableContainer {
+    padding:  0;
+}
+
+#listTable {
+    margin-left: 0;
+    margin-right: 0;
+    margin-bottom: 0;
 }
