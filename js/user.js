@@ -45,14 +45,8 @@ $("#addButton").click(function() {
     var description = $("#inputGiftDescription").val();
     var link = $("#inputGiftLink").val();
     var linkButton = '<td><a type="button" id="linkButton" class="btn btn-info" href=' + link + ' target="_blank">See it online</a></td>';
-    if (rank === "") {
-        rank = "-";
-    }
     if (name === "") {
         alert("Please enter a name for the item");
-    }
-    if (description === "") {
-        description = "None given...";
     }
     if (link === "") {
         linkButton = '<td><button type="button" id="linkButton" class="btn btn-default" disabled="disabled">No link</button></td>';
@@ -101,9 +95,6 @@ $(document).on('click', '.editButton', function() {
             $(this).html("Edit");
             // done for the rank
             var tempRank = $("#inputNewRank" + clicked).val();
-            if (tempRank === "") {
-                tempRank = "-";
-            }
             $("#rank" + clicked).html("<p class='help-block' id='rankP" + clicked + "'>" + tempRank + "</p>");
             var rankRef = database.ref('lists/' + listNum + '/listItems/item' + clicked + '/rank').set(tempRank);
             // done for the name
@@ -111,9 +102,6 @@ $(document).on('click', '.editButton', function() {
             var nameRef = database.ref('lists/' + listNum + '/listItems/item' + clicked + '/itemName').set(tempName);
             // done for the description
             var tempDescription = $("#inputNewDescription" + clicked).val();
-            if (tempDescription === "") {
-                tempDescription = "None given...";
-            }
             $("#description" + clicked).html("<p class='help-block' id='descriptionP" + clicked + "'>" + tempDescription + "</p>");
             var descriptionRef = database.ref('lists/' + listNum + '/listItems/item' + clicked + '/description').set(tempDescription);
         }
