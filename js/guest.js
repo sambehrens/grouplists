@@ -48,7 +48,9 @@ $(document).on('click', '.get-it', function() {
 });
 $(document).on('click', '.submitButton', function() {
     var clicked = $(this).attr('name');
-    var claimedRef = database.ref('lists/' + listNum + '/listItems/item' + clicked + '/claimed').set(true);
-    var claimerRef = database.ref('lists/' + listNum + '/listItems/item' + clicked + '/claimer').set($('#inputYourName' + clicked + '').val());
+    if ($('#inputYourName' + clicked + '').val() !== "") {
+        var claimedRef = database.ref('lists/' + listNum + '/listItems/item' + clicked + '/claimed').set(true);
+        var claimerRef = database.ref('lists/' + listNum + '/listItems/item' + clicked + '/claimer').set($('#inputYourName' + clicked + '').val());
+    }
     location.reload();
 });
