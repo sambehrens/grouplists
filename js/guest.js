@@ -44,13 +44,17 @@ function loadData() {
 $(document).on('click', '.get-it', function() {
     var clicked = $(this).attr('name');
     $(this).remove();
-    $('#' + clicked).append('<form class="form-inline"><div class="form-group"><label class="sr-only" for="exampleInputEmail3">Email address</label><input type="normal" class="form-control" id="inputYourName' + clicked + '" placeholder="Your Name"></div><button name="' + clicked + '" type="button" class="btn btn-default submitButton">Submit</button></form>');
+    $('#' + clicked).append('<form class="form-inline  id="enterNameForm' + clicked + '"><div class="form-group"><label class="sr-only" for="exampleInputEmail3">Email address</label><input type="normal" class="form-control" id="inputYourName' + clicked + '" placeholder="Your Name"></div><button name="' + clicked + '" type="button" class="btn btn-default submitButton">Submit</button></form>');
 });
 $(document).on('click', '.submitButton', function() {
     var clicked = $(this).attr('name');
     if ($('#inputYourName' + clicked + '').val() !== "") {
         var claimedRef = database.ref('lists/' + listNum + '/listItems/item' + clicked + '/claimed').set(true);
         var claimerRef = database.ref('lists/' + listNum + '/listItems/item' + clicked + '/claimer').set($('#inputYourName' + clicked + '').val());
+        location.reload();
     }
-    location.reload();
+    else {
+        $('#' + clicked).empty();
+        $('#' + clicked).append("<button name='" + clicked + "' type='button' class='btn btn-primary get-it'>I'll get it</button>");
+    }
 });
