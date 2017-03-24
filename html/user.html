@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Group Lists</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://www.gstatic.com/firebasejs/3.6.1/firebase.js"></script>
+    <script>
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyBJ4VBorBm_t2lmv2B5Q1E1jqnOtpAlh4w",
+        authDomain: "group-lists-6a5b4.firebaseapp.com",
+        databaseURL: "https://group-lists-6a5b4.firebaseio.com",
+        storageBucket: "group-lists-6a5b4.appspot.com",
+        messagingSenderId: "789866038637"
+      };
+      firebase.initializeApp(config);
+    </script>
+    <script src="../jQuery/jquery-3.1.1.min.js"></script>
+    <link href="../dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../dist/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/mobile.css">
+</head>
+<body>
+    <div class="headingContainer">
+        <h2 id="listTitle">List</h2>
+        <p id="listDescription" class="help-block">Description</p>
+    </div>
+    <div id="functionRow" class="hidden-print">
+        <button type="button" id="backButton" class="btn btn-default"><span class="glyphicon glyphicon-chevron-left"></span> Back to Lists</button>
+        <button type="button" id="printListButton" class="btn btn-default"><span class="glyphicon glyphicon-print"></span> Print List</button>
+        <button type="button" id="editListDescription" class="btn btn-default"><span class="glyphicon glyphicon-edit"></span> Edit List Description</button>
+        <button type="button" id="editListName" class="btn btn-default"><span class="glyphicon glyphicon-edit"></span> Edit List Name</button>
+    </div>
+    <div id="listContainer">
+        <div class="panel panel-default table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th><span class="glyphicon glyphicon-stats"></span></th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th class="hidden-print"><span class="glyphicon glyphicon-globe"></span> Link</th>
+                        <th class="hidden-print"><span class="glyphicon glyphicon-edit"></span> Edit</th>
+                        <th class="text-right hidden-print"><span class="glyphicon glyphicon-remove-circle"></span> Delete</th>
+                    </tr>
+                </thead>
+                <tbody id="listBody"></tbody>
+            </table>
+        </div>
+    </div>
+    <div id="addButtonForm" class="panel panel-default inputPanel hidden-print">
+        <h4 id="createNewListTitle">Add New Item</h4>
+        <form class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Rank</label>
+                <div class="col-sm-10">
+                    <input type="normal" class="form-control" id="inputGiftRank" placeholder="# - optional">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Gift Name</label>
+                <div class="col-sm-10">
+                    <input type="normal" class="form-control" id="inputGiftName" placeholder="Name">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Description</label>
+                <div class="col-sm-10">
+                    <input type="normal" class="form-control" id="inputGiftDescription" placeholder="Description">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Link</label>
+                <div class="col-sm-10">
+                    <input type="normal" class="form-control" id="inputGiftLink" placeholder="Link">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="button" id="addButton" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span> Add</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <script src="../js/user.js"></script>
+</body>
+</html>

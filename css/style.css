@@ -1,23 +1,58 @@
-
-#listContainer {
-    width: 80%;
-    margin: auto;
-    margin-top: 5%;
+.headingContainer {
+    margin-top: 7%;
+    margin-bottom: 5%;
 }
 
 #listTitle {
     text-align: center;
 }
 
-
-
-#headingContainer {
-    margin-top: 10%;
+#listDescription {
+    text-align: center;
 }
 
-.inputPanel {
-    padding: 1.5%;
+#functionRow {
+    width: 80%;
+    margin: 3% auto 0 auto;
+    padding-bottom: 1%;
 }
+
+#printListButton {
+    float: right;
+    margin-left: 1%;
+}
+
+#editListDescription {
+    margin-left: 1%;
+    float: right;
+}
+
+#editListName {
+    margin-left: 1%;
+    float: right;
+}
+
+#enterListNameForm {
+    float: right;
+    width: 261px;
+}
+
+#enterListDescriptionForm {
+    float: right;
+    width: 261px;
+    margin-left: 1%;
+}
+
+.claimItForm {
+    margin-right: 0;
+}
+
+#listContainer {
+    width: 80%;
+    margin: auto;
+    margin-bottom: 3%;
+}
+
 #listTableContainer {
     padding:  0;
 }
@@ -26,4 +61,33 @@
     margin-left: 0;
     margin-right: 0;
     margin-bottom: 0;
+}
+
+table tr td:last-child {
+    text-align: right;
+    white-space: nowrap;
+    width: 91px;
+}
+
+.inputPanel {
+    padding: 15px 15px 0 15px;
+    width: 65%;
+    margin: 0 auto 2% auto;
+}
+
+#createNewListTitle {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #aaa;
+}
+
+@media print
+{    
+    #listContainer {
+        margin-top: 8%;
+        width: 90%;
+    }
+    .headingContainer {
+        margin-top: 5%;
+    }
 }

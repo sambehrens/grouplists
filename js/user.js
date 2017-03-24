@@ -3,11 +3,16 @@ var count = 0;
 var itemCount = 0;
 var listNum = sessionStorage.getItem('num');
 var ready = false;
+var name;
+var description;
 
 $(document).ready(function() {
     var titleRef = database.ref('lists/' + listNum + '/');
     titleRef.on('value', function(snapshot) {
         $("#listTitle").text(snapshot.val().listName + "'s List")
+        $("#listDescription").text(snapshot.val().description);
+        name = snapshot.val().listName;
+        description = snapshot.val().description;
     });
     var countRef = database.ref('lists/' + listNum + '/itemCount');
     countRef.on('value', function(snapshot) {
@@ -34,7 +39,7 @@ function loadData() {
 function appendList(listRef,index) {
     listRef.once('value').then(function(snapshot) {
         if (!snapshot.val().deleted) {
-            $("#listBody").append("<tr id='" + index + "'><td id=rank" + index + "><p class='help-block' id='rankP" + index + "'>" + snapshot.val().rank + "</p></td><td id=name" + index + "><h5 id='nameP" + index + "'>" + snapshot.val().itemName + "</h5></td><td id='description" + index + "'><p class='help-block' id='descriptionP" + index + "'>" + snapshot.val().description + "</p></td>" + snapshot.val().link + "<td><button name='" + index + "' type='button' class='btn btn-default editButton'>Edit</button></td><td><button type='button' name='" + index + "' class='close deleteButton' aria-label='Close'><span aria-hidden='true'>&times;</span></button></td></tr>");
+            $("#listBody").append("<tr id='" + index + "'><td id=rank" + index + "><p class='help-block' id='rankP" + index + "'>" + snapshot.val().rank + "</p></td><td id=name" + index + "><h5 id='nameP" + index + "'>" + snapshot.val().itemName + "</h5></td><td id='description" + index + "'><p class='help-block' id='descriptionP" + index + "'>" + snapshot.val().description + "</p></td>" + snapshot.val().link + "<td class='hidden-print'><button name='" + index + "' type='button' class='btn btn-default editButton'>Edit</button></td><td class='hidden-print'><button type='button' name='" + index + "' class='close deleteButton' aria-label='Close'><span aria-hidden='true'>&times;</span></button></td></tr>");
         }
     });
 }
@@ -44,15 +49,15 @@ $("#addButton").click(function() {
     var name = $("#inputGiftName").val();
     var description = $("#inputGiftDescription").val();
     var link = $("#inputGiftLink").val();
-    var linkButton = '<td><a type="button" id="linkButton" class="btn btn-info" href=' + link + ' target="_blank">See it online</a></td>';
+    var linkButton = '<td class="hidden-print"><a type="button" id="linkButton" class="btn btn-info" href=' + link + ' target="_blank">See it online</a></td>';
     if (name === "") {
         alert("Please enter a name for the item");
     }
     if (link === "") {
-        linkButton = '<td><button type="button" id="linkButton" class="btn btn-default" disabled="disabled">No link</button></td>';
+        linkButton = '<td class="hidden-print"><button type="button" id="linkButton" class="btn btn-default" disabled="disabled">No link</button></td>';
     }
     if (name !== "") {
-        $("#listBody").append("<tr id='" + itemCount + "'><td id='rank" + itemCount + "'><p class='help-block' id='rankP" + itemCount + "'>" + rank + "</p></td><td id='name" + itemCount + "'><h5 id='nameP" + itemCount + "'>" + name + "</h5></td><td id='description" + itemCount + "'><p class='help-block' id='descriptionP" + itemCount + "'>" + description + "</p></td>" + linkButton + "<td id=edit" + itemCount + "><button name='" + itemCount + "' type='button' class='btn btn-default editButton'>Edit</button></td><td><button type='button' name='" + itemCount + "' class='close deleteButton' aria-label='Close'><span aria-hidden='true'>&times;</span></button></td></tr>");
+        $("#listBody").append("<tr id='" + itemCount + "'><td id='rank" + itemCount + "'><p class='help-block' id='rankP" + itemCount + "'>" + rank + "</p></td><td id='name" + itemCount + "'><h5 id='nameP" + itemCount + "'>" + name + "</h5></td><td id='description" + itemCount + "'><p class='help-block' id='descriptionP" + itemCount + "'>" + description + "</p></td>" + linkButton + "<td class='hidden-print' id='edit" + itemCount + "'><button name='" + itemCount + "' type='button' class='btn btn-default editButton'>Edit</button></td><td class='hidden-print'><button type='button' name='" + itemCount + "' class='close deleteButton' aria-label='Close'><span aria-hidden='true'>&times;</span></button></td></tr>");
         $("#inputGiftRank").val("");
         $("#inputGiftName").val("");
         $("#inputGiftDescription").val("");
@@ -106,6 +111,62 @@ $(document).on('click', '.editButton', function() {
             var descriptionRef = database.ref('lists/' + listNum + '/listItems/item' + clicked + '/description').set(tempDescription);
         }
     }
+});
+$(document).on('click', '#backButton', function() {
+    window.location.href = '../index.html';
+});
+$(document).on('click', '#editListName', function() {
+    $(this).remove();
+    $('#functionRow').append('<form class="form-inline" id="enterListNameForm"><div class="form-group"><label class="sr-only" for="name">Name</label><input type="normal" class="form-control" id="inputListName" placeholder="List Name"></div><button id="submitNewName" type="button" class="btn btn-default submitButton" style="margin-left: 4.5%;"><span class="glyphicon glyphicon-check"></span> Done</button></form>');
+    if (name != "") {
+        $('#inputListName').val(name);
+    }
+});
+$(document).on('click', '#submitNewName', function() {
+    var tempListName = $('#inputListName').val();
+    if (tempListName != "") {
+        database.ref('lists/' + listNum + '/listName').set(tempListName);
+        $('#enterListNameForm').remove();
+        $('#functionRow').append('<button type="button" id="editListName" class="btn btn-default"><span class="glyphicon glyphicon-edit"></span> Edit List Name</button>');
+    }
+});
+$(document).on('click', '#editListDescription', function() {
+    $(this).remove();
+    if ($('#editListName').length) {
+        $('#editListName').remove();
+        $('#functionRow').append('<form class="form-inline" id="enterListDescriptionForm"><div class="form-group"><label class="sr-only" for="name">Description</label><input type="normal" class="form-control" id="inputListDescription" placeholder="List Description"></div><button id="submitNewDescription" type="button" class="btn btn-default submitButton" style="margin-left: 4.5%;"><span class="glyphicon glyphicon-check"></span> Done</button></form><button type="button" id="editListName" class="btn btn-default"><span class="glyphicon glyphicon-edit"></span> Edit List Name</button>');
+    }
+    else {
+        $('#enterListNameForm').remove();
+        $('#functionRow').append('<form class="form-inline" id="enterListDescriptionForm"><div class="form-group"><label class="sr-only" for="name">Description</label><input type="normal" class="form-control" id="inputListDescription" placeholder="List Description"></div><button id="submitNewDescription" type="button" class="btn btn-default submitButton" style="margin-left: 4.5%;"><span class="glyphicon glyphicon-check"></span> Done</button></form><form class="form-inline" id="enterListNameForm"><div class="form-group"><label class="sr-only" for="name">Name</label><input type="normal" class="form-control" id="inputListName" placeholder="List Name"></div><button id="submitNewName" type="button" class="btn btn-default submitButton" style="margin-left: 4.5%;"><span class="glyphicon glyphicon-check"></span> Done</button></form>');
+        if (name != "") {
+            $('#inputListName').val(name);
+        }
+    }
+    if (description != "") {
+        $('#inputListDescription').val(description);
+    }
+});
+$(document).on('click', '#submitNewDescription', function() {
+    var tempListDesc = $('#inputListDescription').val();
+    if (tempListDesc != "") {
+        database.ref('lists/' + listNum + '/description').set(tempListDesc);
+        $('#enterListDescriptionForm').remove();
+        if ($('#editListName').length) {
+            $('#editListName').remove();
+            $('#functionRow').append('<button type="button" id="editListDescription" class="btn btn-default"><span class="glyphicon glyphicon-edit"></span> Edit List Description</button><button type="button" id="editListName" class="btn btn-default"><span class="glyphicon glyphicon-edit"></span> Edit List Name</button>');
+        }
+        else {
+            $('#enterListNameForm').remove();
+            $('#functionRow').append('<button type="button" id="editListDescription" class="btn btn-default"><span class="glyphicon glyphicon-edit"></span> Edit List Description</button><form class="form-inline" id="enterListNameForm"><div class="form-group"><label class="sr-only" for="name">Name</label><input type="normal" class="form-control" id="inputListName" placeholder="List Name"></div><button id="submitNewName" type="button" class="btn btn-default submitButton" style="margin-left: 4.5%;"><span class="glyphicon glyphicon-check"></span> Done</button></form>');
+            if (name != "") {
+                $('#inputListName').val(name);
+            }
+        }
+    }
+});
+$(document).on('click', '#printListButton', function() {
+    window.print();
 });
 
 function writeListData(name, description, link, rank) {

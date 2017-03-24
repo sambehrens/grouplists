@@ -60,7 +60,7 @@ $("#addButton").click(function() {
 $(document).on('click', '.editButton', function() {
     var index = $(this).attr('name');
     sessionStorage.setItem('num', index);
-    window.location.href = 'user.html';
+    window.location.href = 'html/user.html';
 });
 $(document).on('click', '.viewButton', function() {
     var index = $(this).attr('name');
@@ -80,7 +80,7 @@ $(document).on('click', '.viewButton', function() {
         callback: function(result) {
             // result will be true if button was click, while it will be false if users close the dialog directly.
             if(result) {
-                window.location.href = 'guest.html';
+                window.location.href = 'html/guest.html';
             }else {
                 // do nothing
             }

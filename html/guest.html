@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Group Lists</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://www.gstatic.com/firebasejs/3.6.1/firebase.js"></script>
+    <script>
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyBJ4VBorBm_t2lmv2B5Q1E1jqnOtpAlh4w",
+        authDomain: "group-lists-6a5b4.firebaseapp.com",
+        databaseURL: "https://group-lists-6a5b4.firebaseio.com",
+        storageBucket: "group-lists-6a5b4.appspot.com",
+        messagingSenderId: "789866038637"
+      };
+      firebase.initializeApp(config);
+    </script>
+    <script src="../jQuery/jquery-3.1.1.min.js"></script>
+    <link href="../dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../dist/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/mobile.css">
+</head>
+<body>
+    <div class="headingContainer">
+        <h2 id="listTitle">List</h2>
+        <p id="listDescription" class="help-block">Description</p>
+    </div>
+    <div id="functionRow" class="hidden-print">
+        <button type="button" id="printListButton" class="btn btn-default"><span class="glyphicon glyphicon-print"></span> Print List</button>
+        <button type="button" id="backButton" class="btn btn-default"><span class="glyphicon glyphicon-chevron-left"></span> Back to Lists</button>
+    </div>
+    <div id="listContainer" class="panel panel-default table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th><span class="glyphicon glyphicon-stats"></span></th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th class="hidden-print"><span class="glyphicon glyphicon-globe"></span> Link</th>
+                    <th class="hidden-print"><span class="glyphicon glyphicon-flag"></span> Claim it</th>
+                </tr>
+            </thead>
+            <tbody id="listBody"></tbody>
+        </table>
+    </div>
+    <script src="../js/guest.js"></script>
+</body>
+</html>
