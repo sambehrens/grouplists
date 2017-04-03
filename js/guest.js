@@ -45,7 +45,7 @@ function loadData() {
 $(document).on('click', '.get-it', function() {
     var clicked = $(this).attr('name');
     $(this).remove();
-    $('#' + clicked).append('<form class="form-inline claimItForm"  id="enterNameForm' + clicked + '"><div class="form-group"><label class="sr-only" for="exampleInputEmail3">Email address</label><input type="normal" class="form-control" id="inputYourName' + clicked + '" placeholder="Your Name"></div><button name="' + clicked + '" type="button" style="margin-left: 3%;" class="btn btn-default submitButton">Submit</button></form>');
+    $('#' + clicked).append('<form class="form-inline claimItForm"  id="enterNameForm' + clicked + '"><div class="form-group"><label class="sr-only" for="exampleInputEmail3">Email address</label><input type="normal" class="form-control" id="inputYourName' + clicked + '" placeholder="Your Name"></div><button name="' + clicked + '" type="button" style="margin-left: 6px;" class="btn btn-default submitButton">Submit</button></form>');
 });
 $(document).on('click', '.submitButton', function() {
     var clicked = $(this).attr('name');
