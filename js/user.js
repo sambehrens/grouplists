@@ -5,6 +5,7 @@ var listNum = sessionStorage.getItem('num');
 var ready = false;
 var name;
 var description;
+var deleted = null;
 
 $(document).ready(function() {
     var titleRef = database.ref('lists/' + listNum + '/');
@@ -43,6 +44,12 @@ function appendList(listRef,index) {
         }
     });
 }
+function clearList() {
+    database.ref('lists/' + listNum + '/itemCount').set(0);
+    database.ref('lists/' + listNum + '/listItems').remove();
+    deleted = 0;
+    itemCount = 0;
+}
 
 $("#addButton").click(function() {
     var rank = $("#inputGiftRank").val();
@@ -66,10 +73,15 @@ $("#addButton").click(function() {
         itemCount++;
         database.ref('lists/' + listNum + '/itemCount').set(itemCount);
     }
+    window.location.href = '#add';
 });
 $(document).on('click', '.deleteButton', function() {
     $("#" + $(this).attr('name')).remove();
     var deletedRef = database.ref('lists/' + listNum + '/listItems/item' + $(this).attr('name') + '/deleted').set(true);
+    deleted += 1;
+    if (deleted === itemCount) {
+        clearList();
+    }
 });
 $(document).on('click', '.editButton', function() {
     var clicked = $(this).attr('name');
