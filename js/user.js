@@ -44,7 +44,11 @@ function loadData() {
 }
 function appendList(listRef,index) {
     listRef.once('value').then(function(snapshot) {
-        $("#listBody").append("<tr id='" + index + "'><td id=rank" + index + "><p class='help-block' id='rankP" + index + "'>" + snapshot.val().rank + "</p></td><td id=name" + index + "><h5 id='nameP" + index + "'>" + snapshot.val().itemName + "</h5></td><td id='description" + index + "'><p class='help-block' id='descriptionP" + index + "'>" + snapshot.val().description + "</p></td>" + snapshot.val().link + "<td class='hidden-print'><button name='" + index + "' type='button' class='btn btn-default editButton'>Edit</button></td><td class='hidden-print'><button type='button' name='" + index + "' class='close deleteButton' aria-label='Close'><span aria-hidden='true'>&times;</span></button></td></tr>");
+        var linkButton = '<td class="hidden-print" id="link' + index + '"><a type="button" id="linkButton' + index + '" class="btn btn-info" href=' + snapshot.val().link + ' target="_blank">See it online</a></td>';
+        if (snapshot.val().link === "") {
+            linkButton = '<td class="hidden-print" id="link' + index + '"><button type="button" id="linkButton' + index + '" class="btn btn-default" disabled="disabled">No link</button></td>';
+        }
+        $("#listBody").append("<tr id='" + index + "'><td id=rank" + index + "><p class='help-block' id='rankP" + index + "'>" + snapshot.val().rank + "</p></td><td id=name" + index + "><h5 id='nameP" + index + "'>" + snapshot.val().itemName + "</h5></td><td id='description" + index + "'><p class='help-block' id='descriptionP" + index + "'>" + snapshot.val().description + "</p></td>" + linkButton + "<td class='hidden-print'><button name='" + index + "' type='button' class='btn btn-default editButton'>Edit</button></td><td class='hidden-print'><button type='button' name='" + index + "' class='close deleteButton' aria-label='Close'><span aria-hidden='true'>&times;</span></button></td></tr>");
     });
 }
 
@@ -53,13 +57,13 @@ $("#addButton").click(function() {
     var name = $("#inputGiftName").val();
     var description = $("#inputGiftDescription").val();
     var link = $("#inputGiftLink").val();
-    var linkButton = '<td class="hidden-print"><a type="button" id="linkButton" class="btn btn-info" href=' + link + ' target="_blank">See it online</a></td>';
+    var linkButton = '<td class="hidden-print" id="link' + itemCount+ '"><a type="button" id="linkButton' + itemCount + '" class="btn btn-info" href=' + link + ' target="_blank">See it online</a></td>';
     if (name === "") {
         $('#alertBar').html('<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span><span class="sr-only">Error:</span>Enter a valid gift name');
         $('#alertBar').fadeIn('fast');
     }
     if (link === "") {
-        linkButton = '<td class="hidden-print"><button type="button" id="linkButton" class="btn btn-default" disabled="disabled">No link</button></td>';
+        linkButton = '<td class="hidden-print" id="link' + itemCount + '"><button type="button" id="linkButton' + itemCount + '" class="btn btn-default" disabled="disabled">No link</button></td>';
     }
     if (name !== "") {
         $("#listBody").append("<tr id='" + itemCount + "'><td id='rank" + itemCount + "'><p class='help-block' id='rankP" + itemCount + "'>" + rank + "</p></td><td id='name" + itemCount + "'><h5 id='nameP" + itemCount + "'>" + name + "</h5></td><td id='description" + itemCount + "'><p class='help-block' id='descriptionP" + itemCount + "'>" + description + "</p></td>" + linkButton + "<td class='hidden-print' id='edit" + itemCount + "'><button name='" + itemCount + "' type='button' class='btn btn-default editButton'>Edit</button></td><td class='hidden-print'><button type='button' name='" + itemCount + "' class='close deleteButton' aria-label='Close'><span aria-hidden='true'>&times;</span></button></td></tr>");
@@ -67,7 +71,7 @@ $("#addButton").click(function() {
         $("#inputGiftName").val("");
         $("#inputGiftDescription").val("");
         $("#inputGiftLink").val("");
-        writeListData(name, description, linkButton, rank);
+        writeListData(name, description, link, rank);
         itemCount++;
         database.ref('lists/' + listNum + '/itemCount').set(itemCount);
         $('#alertBar').hide();
@@ -141,6 +145,11 @@ $(document).on('click', '.editButton', function() {
         $("#description" + clicked).html("");
         $("#description" + clicked).append('<form class="form-inline"><div class="form-group"><label class="sr-only" for="inputNewDescription">Description</label><input type="normal" class="form-control" id="inputNewDescription' + clicked + '" placeholder="Description"></div></form>');
         $("#inputNewDescription" + clicked).val(tempDescription);
+        //this is the link edit
+        var tempLink = $("#linkButton" + clicked).attr('href');
+        $("#link" + clicked).html("");
+        $("#link" + clicked).append('<form class="form-inline"><div class="form-group"><label class="sr-only" for="inputNewLink">Link</label><input type="normal" class="form-control" id="inputNewLink' + clicked + '" placeholder="Link"></div></form>');
+        $("#inputNewLink" + clicked).val(tempLink);
     }
     else if ($(this).html() === 'Done') {
         var tempName = $("#inputNewName" + clicked).val();
@@ -152,14 +161,22 @@ $(document).on('click', '.editButton', function() {
             // done for the rank
             var tempRank = $("#inputNewRank" + clicked).val();
             $("#rank" + clicked).html("<p class='help-block' id='rankP" + clicked + "'>" + tempRank + "</p>");
-            var rankRef = database.ref('lists/' + listNum + '/listItems/item' + clicked + '/rank').set(tempRank);
+            database.ref('lists/' + listNum + '/listItems/item' + clicked + '/rank').set(tempRank);
             // done for the name
             $("#name" + clicked).html("<h5 id='nameP" + clicked + "'>" + tempName + "</h5>");
-            var nameRef = database.ref('lists/' + listNum + '/listItems/item' + clicked + '/itemName').set(tempName);
+            database.ref('lists/' + listNum + '/listItems/item' + clicked + '/itemName').set(tempName);
             // done for the description
             var tempDescription = $("#inputNewDescription" + clicked).val();
             $("#description" + clicked).html("<p class='help-block' id='descriptionP" + clicked + "'>" + tempDescription + "</p>");
-            var descriptionRef = database.ref('lists/' + listNum + '/listItems/item' + clicked + '/description').set(tempDescription);
+            database.ref('lists/' + listNum + '/listItems/item' + clicked + '/description').set(tempDescription);
+            // done for the link
+            var tempLink = $("#inputNewLink" + clicked).val();
+            var linkButton = '<a type="button" id="linkButton' + clicked + '" class="btn btn-info" href=' + tempLink + ' target="_blank">See it online</a>';
+            if (tempLink === "") {
+                linkButton = '<button type="button" id="linkButton' + clicked + '" class="btn btn-default" disabled="disabled">No link</button>';
+            }
+            $("#link" + clicked).html(linkButton);
+            database.ref('lists/' + listNum + '/listItems/item' + clicked + '/link').set(tempLink);
         }
     }
 });

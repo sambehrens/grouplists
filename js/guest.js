@@ -26,13 +26,15 @@ function loadData() {
         for (var i = 0; i < itemCount; i+=1) {
             var listRef = database.ref('lists/' + listNum + '/listItems/item' + i + '/');
             listRef.on('value', function(snapshot) {
-                if (!snapshot.val().deleted) {
-                    if (!snapshot.val().claimed) {
-                        $("#listBody").append("<tr id='" + snapshot.val().itemName.replace(/\s/g, '') + "'><td><p class='help-block'>" + snapshot.val().rank + "</p></td><td><h5>" + snapshot.val().itemName + "</h5></td><td><p class='help-block'>" + snapshot.val().description + "</p></td>" + snapshot.val().link + "<td class='hidden-print' id='" + i + "'><button name='" + i + "' type='button' class='btn btn-primary get-it'>I'll get it</button></td></tr>");
-                    }
-                    else {
-                        $("#listBody").append("<tr id='" + snapshot.val().itemName.replace(/\s/g, '') + "'><td><p class='help-block'>" + snapshot.val().rank + "</p></td><td><p class='help-block'>" + snapshot.val().itemName + "</p></td><td><p class='help-block'>" + snapshot.val().description + "</p></td>" + snapshot.val().link + "<td><p class='text-danger'>" + snapshot.val().claimer + "</p></td></tr>");
-                    }
+                var linkButton = '<td class="hidden-print"><a type="button" id="linkButton" class="btn btn-info" href=' + snapshot.val().link + ' target="_blank">See it online</a></td>';
+                if (snapshot.val().link === "") {
+                    linkButton = '<td class="hidden-print"><button type="button" id="linkButton" class="btn btn-default" disabled="disabled">No link</button></td>';
+                }
+                if (!snapshot.val().claimed) {
+                    $("#listBody").append("<tr id='" + snapshot.val().itemName.replace(/\s/g, '') + "'><td><p class='help-block'>" + snapshot.val().rank + "</p></td><td><h5>" + snapshot.val().itemName + "</h5></td><td><p class='help-block'>" + snapshot.val().description + "</p></td>" + linkButton + "<td class='hidden-print' id='" + i + "'><button name='" + i + "' type='button' class='btn btn-primary get-it'>I'll get it</button></td></tr>");
+                }
+                else {
+                    $("#listBody").append("<tr id='" + snapshot.val().itemName.replace(/\s/g, '') + "'><td><p class='help-block'>" + snapshot.val().rank + "</p></td><td><p class='help-block'>" + snapshot.val().itemName + "</p></td><td><p class='help-block'>" + snapshot.val().description + "</p></td>" + linkButton + "<td><p class='text-danger'>" + snapshot.val().claimer + "</p></td></tr>");
                 }
             });
         }
