@@ -44,8 +44,9 @@ function loadData() {
 }
 function appendList(listRef,index) {
     listRef.once('value').then(function(snapshot) {
-        var linkButton = '<td class="hidden-print" id="link' + index + '"><a type="button" id="linkButton' + index + '" class="btn btn-info" href=' + snapshot.val().link + ' target="_blank">See it online</a></td>';
-        if (snapshot.val().link === "") {
+        var link = snapshot.val().link
+        var linkButton = '<td class="hidden-print" id="link' + index + '"><a type="button" id="linkButton' + index + '" class="btn btn-info" href=' + link + ' target="_blank">See it online</a></td>';
+        if (link === "") {
             linkButton = '<td class="hidden-print" id="link' + index + '"><button type="button" id="linkButton' + index + '" class="btn btn-default" disabled="disabled">No link</button></td>';
         }
         $("#listBody").append("<tr id='" + index + "'><td id=rank" + index + "><p class='help-block' id='rankP" + index + "'>" + snapshot.val().rank + "</p></td><td id=name" + index + "><h5 id='nameP" + index + "'>" + snapshot.val().itemName + "</h5></td><td id='description" + index + "'><p class='help-block' id='descriptionP" + index + "'>" + snapshot.val().description + "</p></td>" + linkButton + "<td class='hidden-print'><button name='" + index + "' type='button' class='btn btn-default editButton'>Edit</button></td><td class='hidden-print'><button type='button' name='" + index + "' class='close deleteButton' aria-label='Close'><span aria-hidden='true'>&times;</span></button></td></tr>");
