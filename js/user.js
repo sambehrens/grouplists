@@ -2,10 +2,11 @@ var database = firebase.database();
 var count = 0;
 var itemCount = 0;
 var listNum = sessionStorage.getItem('num');
+var numLists;
 var ready = false;
 var name;
 var description;
-var deleted = null;
+var listCount;
 
 $(document).ready(function() {
     var titleRef = database.ref('lists/' + listNum + '/');
@@ -23,6 +24,10 @@ $(document).ready(function() {
             itemCount = 0;
         }
     });
+    var countRef = database.ref('/count');
+    countRef.on('value', function(snapshot) {
+        listCount = snapshot.val();
+    });
     loadData();
 });
 
@@ -39,16 +44,8 @@ function loadData() {
 }
 function appendList(listRef,index) {
     listRef.once('value').then(function(snapshot) {
-        if (!snapshot.val().deleted) {
-            $("#listBody").append("<tr id='" + index + "'><td id=rank" + index + "><p class='help-block' id='rankP" + index + "'>" + snapshot.val().rank + "</p></td><td id=name" + index + "><h5 id='nameP" + index + "'>" + snapshot.val().itemName + "</h5></td><td id='description" + index + "'><p class='help-block' id='descriptionP" + index + "'>" + snapshot.val().description + "</p></td>" + snapshot.val().link + "<td class='hidden-print'><button name='" + index + "' type='button' class='btn btn-default editButton'>Edit</button></td><td class='hidden-print'><button type='button' name='" + index + "' class='close deleteButton' aria-label='Close'><span aria-hidden='true'>&times;</span></button></td></tr>");
-        }
+        $("#listBody").append("<tr id='" + index + "'><td id=rank" + index + "><p class='help-block' id='rankP" + index + "'>" + snapshot.val().rank + "</p></td><td id=name" + index + "><h5 id='nameP" + index + "'>" + snapshot.val().itemName + "</h5></td><td id='description" + index + "'><p class='help-block' id='descriptionP" + index + "'>" + snapshot.val().description + "</p></td>" + snapshot.val().link + "<td class='hidden-print'><button name='" + index + "' type='button' class='btn btn-default editButton'>Edit</button></td><td class='hidden-print'><button type='button' name='" + index + "' class='close deleteButton' aria-label='Close'><span aria-hidden='true'>&times;</span></button></td></tr>");
     });
-}
-function clearList() {
-    database.ref('lists/' + listNum + '/itemCount').set(0);
-    database.ref('lists/' + listNum + '/listItems').remove();
-    deleted = 0;
-    itemCount = 0;
 }
 
 $("#addButton").click(function() {
@@ -58,7 +55,8 @@ $("#addButton").click(function() {
     var link = $("#inputGiftLink").val();
     var linkButton = '<td class="hidden-print"><a type="button" id="linkButton" class="btn btn-info" href=' + link + ' target="_blank">See it online</a></td>';
     if (name === "") {
-        alert("Please enter a name for the item");
+        $('#alertBar').html('<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span><span class="sr-only">Error:</span>Enter a valid gift name');
+        $('#alertBar').fadeIn('fast');
     }
     if (link === "") {
         linkButton = '<td class="hidden-print"><button type="button" id="linkButton" class="btn btn-default" disabled="disabled">No link</button></td>';
@@ -72,16 +70,57 @@ $("#addButton").click(function() {
         writeListData(name, description, linkButton, rank);
         itemCount++;
         database.ref('lists/' + listNum + '/itemCount').set(itemCount);
+        $('#alertBar').hide();
     }
     window.location.href = '#add';
 });
 $(document).on('click', '.deleteButton', function() {
     $("#" + $(this).attr('name')).remove();
-    var deletedRef = database.ref('lists/' + listNum + '/listItems/item' + $(this).attr('name') + '/deleted').set(true);
-    deleted += 1;
-    if (deleted === itemCount) {
-        clearList();
+    var itemNumber = $(this).attr('name');
+    itemNumber = parseInt(itemNumber);
+    for (var i = itemNumber; i < (itemCount-1); i+=1) {
+        var oldRef = database.ref('lists/' + listNum + '/listItems/item' + (i+1));
+        var newRef = database.ref('lists/' + listNum + '/listItems/item' + i);
+        oldRef.on('value', function(snapshot) {
+            newRef.set(snapshot.val());
+        });
     }
+    database.ref('lists/' + listNum + '/listItems/item' + (itemCount-1)).remove();
+    database.ref('lists/' + listNum + '/itemCount').set(itemCount -= 1);
+});
+$(document).on('click', '.deleteListButton', function() {
+    BootstrapDialog.confirm({
+        title: 'WARNING',
+        message: "Are you sure you want to delete " + name + "'s list?",
+        type: BootstrapDialog.TYPE_DANGER,
+        closable: true,
+        btnOKLabel: 'Yes!',
+        btnOKClass: 'btn-danger',
+        callback: function(result) {
+            if(result) {
+                var listNumber = parseInt(listNum.match(/(\d+)$/)[0], 10);
+                database.ref('/lists/list' + listNumber + '/deleted').set(true);
+                if (listNumber === listCount-1) {
+                    database.ref('/count').set(listCount-1);
+                    database.ref('/lists/list' + listNumber).remove();
+                }
+                window.location.href = '../index.html';
+            }else {
+                // do nothing
+            }
+        }
+    });
+//    for (var i = listNumber; i < (listCount-1) || function() {deleteList(); return false;}(); i+=1) {
+//        setTimeout(function() {
+//            var oldRef = database.ref('lists/list' + (i+1));
+//            var newRef = database.ref('lists/list' + i);
+//            oldRef.on('value', function(snapshot) {
+//                newRef.set(snapshot.val());
+//                console.log(snapshot.val());
+//            });
+//            console.log(i);
+//        }, 300);
+//    }
 });
 $(document).on('click', '.editButton', function() {
     var clicked = $(this).attr('name');
@@ -127,57 +166,40 @@ $(document).on('click', '.editButton', function() {
 $(document).on('click', '#backButton', function() {
     window.location.href = '../index.html';
 });
-$(document).on('click', '#editListName', function() {
-    $(this).remove();
-    $('#functionRow').append('<form class="form-inline" id="enterListNameForm"><div class="form-group"><label class="sr-only" for="name">Name</label><input type="normal" class="form-control" id="inputListName" placeholder="List Name"></div><button id="submitNewName" type="button" class="btn btn-default submitButton" style="margin-left: 4.5%;"><span class="glyphicon glyphicon-check"></span> Done</button></form>');
+$(document).on('click', '.editListName', function() {
+    $(this).addClass("disabled");
+    $('#listTitle').html('');
+    $('#listTitle').append('<div class="input-group" id="enterListNameForm"><input type="text" id="inputListName" class="form-control" placeholder="Enter description"><span class="input-group-btn"><button class="btn btn-default submitButton" id="submitNewName" type="button"><span class="glyphicon glyphicon-check"></span> Done</button></span></div>');
     if (name != "") {
         $('#inputListName').val(name);
     }
+    //$('#listTitle').append("<h2>'s List</h2>");
 });
 $(document).on('click', '#submitNewName', function() {
     var tempListName = $('#inputListName').val();
     if (tempListName != "") {
         database.ref('lists/' + listNum + '/listName').set(tempListName);
         $('#enterListNameForm').remove();
-        $('#functionRow').append('<button type="button" id="editListName" class="btn btn-default"><span class="glyphicon glyphicon-edit"></span> Edit List Name</button>');
+        $('#listTitle').html("<h2>" + tempListName + "'s List</h2>");
+        $(".editListName").removeClass("disabled");
     }
 });
-$(document).on('click', '#editListDescription', function() {
-    $(this).remove();
-    if ($('#editListName').length) {
-        $('#editListName').remove();
-        $('#functionRow').append('<form class="form-inline" id="enterListDescriptionForm"><div class="form-group"><label class="sr-only" for="name">Description</label><input type="normal" class="form-control" id="inputListDescription" placeholder="List Description"></div><button id="submitNewDescription" type="button" class="btn btn-default submitButton" style="margin-left: 4.5%;"><span class="glyphicon glyphicon-check"></span> Done</button></form><button type="button" id="editListName" class="btn btn-default"><span class="glyphicon glyphicon-edit"></span> Edit List Name</button>');
-    }
-    else {
-        $('#enterListNameForm').remove();
-        $('#functionRow').append('<form class="form-inline" id="enterListDescriptionForm"><div class="form-group"><label class="sr-only" for="name">Description</label><input type="normal" class="form-control" id="inputListDescription" placeholder="List Description"></div><button id="submitNewDescription" type="button" class="btn btn-default submitButton" style="margin-left: 4.5%;"><span class="glyphicon glyphicon-check"></span> Done</button></form><form class="form-inline" id="enterListNameForm"><div class="form-group"><label class="sr-only" for="name">Name</label><input type="normal" class="form-control" id="inputListName" placeholder="List Name"></div><button id="submitNewName" type="button" class="btn btn-default submitButton" style="margin-left: 4.5%;"><span class="glyphicon glyphicon-check"></span> Done</button></form>');
-        if (name != "") {
-            $('#inputListName').val(name);
-        }
-    }
+$(document).on('click', '.editListDescription', function() {
+    $(this).addClass("disabled");
+    $('#listDescription').html('');
+    $('#listDescription').append('<div class="input-group" id="enterListDescriptionForm"><input type="text" id="inputListDescription" class="form-control" placeholder="Enter description"><span class="input-group-btn"><button class="btn btn-default submitButton" id="submitNewDescription" type="button"><span class="glyphicon glyphicon-check"></span> Done</button></span></div>');
     if (description != "") {
         $('#inputListDescription').val(description);
     }
 });
 $(document).on('click', '#submitNewDescription', function() {
     var tempListDesc = $('#inputListDescription').val();
-    if (tempListDesc != "") {
-        database.ref('lists/' + listNum + '/description').set(tempListDesc);
-        $('#enterListDescriptionForm').remove();
-        if ($('#editListName').length) {
-            $('#editListName').remove();
-            $('#functionRow').append('<button type="button" id="editListDescription" class="btn btn-default"><span class="glyphicon glyphicon-edit"></span> Edit List Description</button><button type="button" id="editListName" class="btn btn-default"><span class="glyphicon glyphicon-edit"></span> Edit List Name</button>');
-        }
-        else {
-            $('#enterListNameForm').remove();
-            $('#functionRow').append('<button type="button" id="editListDescription" class="btn btn-default"><span class="glyphicon glyphicon-edit"></span> Edit List Description</button><form class="form-inline" id="enterListNameForm"><div class="form-group"><label class="sr-only" for="name">Name</label><input type="normal" class="form-control" id="inputListName" placeholder="List Name"></div><button id="submitNewName" type="button" class="btn btn-default submitButton" style="margin-left: 4.5%;"><span class="glyphicon glyphicon-check"></span> Done</button></form>');
-            if (name != "") {
-                $('#inputListName').val(name);
-            }
-        }
-    }
+    $('#enterListDescriptionForm').remove();
+    $('#listDescription').html(tempListDesc);
+    database.ref('lists/' + listNum + '/description').set(tempListDesc);
+    $(".editListDescription").removeClass("disabled");
 });
-$(document).on('click', '#printListButton', function() {
+$(document).on('click', '.printListButton', function() {
     window.print();
 });
 
@@ -192,3 +214,14 @@ function writeListData(name, description, link, rank) {
       deleted: false
   });
 }
+
+// bootstrap modal
+BootstrapDialog.DEFAULT_TEXTS[BootstrapDialog.TYPE_DEFAULT] = 'Information';
+BootstrapDialog.DEFAULT_TEXTS[BootstrapDialog.TYPE_INFO] = 'Information';
+BootstrapDialog.DEFAULT_TEXTS[BootstrapDialog.TYPE_PRIMARY] = 'Information';
+BootstrapDialog.DEFAULT_TEXTS[BootstrapDialog.TYPE_SUCCESS] = 'Success';
+BootstrapDialog.DEFAULT_TEXTS[BootstrapDialog.TYPE_WARNING] = 'Warning';
+BootstrapDialog.DEFAULT_TEXTS[BootstrapDialog.TYPE_DANGER] = 'Danger';
+BootstrapDialog.DEFAULT_TEXTS['OK'] = 'OK';
+BootstrapDialog.DEFAULT_TEXTS['CANCEL'] = 'Cancel';
+BootstrapDialog.DEFAULT_TEXTS['CONFIRM'] = 'Confirmation';

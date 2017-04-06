@@ -17,30 +17,16 @@
     padding-bottom: 1%;
 }
 
-#printListButton {
-    float: right;
-    margin-left: 1%;
-}
-
-#editListDescription {
-    margin-left: 1%;
-    float: right;
-}
-
-#editListName {
-    margin-left: 1%;
-    float: right;
-}
-
 #enterListNameForm {
-    float: right;
-    width: 261px;
+    width: 35%;
+    padding: 8px;
+    margin: auto;
 }
 
 #enterListDescriptionForm {
-    float: right;
-    width: 261px;
-    margin-left: 1%;
+    width: 35%;
+    padding: 8px;
+    margin: auto;
 }
 
 .claimItForm {
@@ -90,4 +76,8 @@ table tr td:last-child {
     .headingContainer {
         margin-top: 5%;
     }
+}
+
+#dropDownOptions {
+    float: right;
 }

@@ -48,6 +48,10 @@
     </div>
     <div id="addButtonForm" class="panel panel-default inputPanel">
         <h4 id="createNewListTitle">Create New List</h4>
+        <div class="alert alert-danger" role="alert" id="alertBar" hidden="true">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            <span class="sr-only">Error:</span> Enter a valid list name
+        </div>
         <form class="form-horizontal">
             <div class="form-group">
                 <label class="col-sm-2 control-label">Name</label>
@@ -69,7 +73,7 @@
             </div>
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-10">
-                    <button type="submit" id="addButton" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span> Add List</button>
+                    <button type="button" id="addButton" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span> Add List</button>
                 </div>
             </div>
         </form>

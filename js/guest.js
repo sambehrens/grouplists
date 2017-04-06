@@ -45,7 +45,8 @@ function loadData() {
 $(document).on('click', '.get-it', function() {
     var clicked = $(this).attr('name');
     $(this).remove();
-    $('#' + clicked).append('<form class="form-inline claimItForm"  id="enterNameForm' + clicked + '"><div class="form-group"><label class="sr-only" for="exampleInputEmail3">Email address</label><input type="normal" class="form-control" id="inputYourName' + clicked + '" placeholder="Your Name"></div><button name="' + clicked + '" type="button" style="margin-left: 6px;" class="btn btn-default submitButton">Submit</button></form>');
+    $enterNameForm = $('<form class="form-inline claimItForm"  id="enterNameForm' + clicked + '" hidden=true><div class="form-group"><label class="sr-only" for="exampleInputEmail3">Email address</label><input type="normal" class="form-control" id="inputYourName' + clicked + '" placeholder="Your Name"></div><button name="' + clicked + '" type="button" style="margin-left: 6px;" class="btn btn-default submitButton">Submit</button></form>');
+    ($enterNameForm).appendTo('#' + clicked).show('fast');
 });
 $(document).on('click', '.submitButton', function() {
     var clicked = $(this).attr('name');
@@ -62,6 +63,6 @@ $(document).on('click', '.submitButton', function() {
 $(document).on('click', '#backButton', function() {
     window.location.href = '../index.html';
 });
-$(document).on('click', '#printListButton', function() {
+$(document).on('click', '.printListButton', function() {
     window.print();
 });

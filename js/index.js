@@ -28,24 +28,27 @@ function loadData() {
 
 function appendList(listRef,index) {
     listRef.on('value', function(snapshot) {
-        $("#listBody").append("<tr><td><h5>" + snapshot.val().listName + "</h5></td><td><p class='help-block'>" + snapshot.val().description + "</p></td><td><button name='list" + index + "' type='button' class='btn btn-info viewButton'>View it</button></td><td><button name='list" + index + "' type='button' class='btn btn-primary editButton'>Edit it</button></td></tr>");
+        if (!snapshot.val().deleted) {
+            $("#listBody").append("<tr><td><h5>" + snapshot.val().listName + "</h5></td><td><p class='help-block'>" + snapshot.val().description + "</p></td><td><button name='list" + index + "' type='button' class='btn btn-info viewButton'>View it</button></td><td><button name='list" + index + "' type='button' class='btn btn-primary editButton'>Edit it</button></td></tr>");
+        }
     });
 }
-
-$("#addButton").click(function() {
+$(document).on('click', '#addButton', function() {
     var name = $("#inputListName").val();
     var description = $("#inputListDescription").val();
     var password = $("#inputListPassword").val();
     var viewButton = '<td><button name="list' + count + '" type="button" class="btn btn-info viewButton">View it</button></td>';
     var editButton = '<td><button name="list' + count + '" type="button" class="btn btn-primary editButton">Edit it</button></td>';
     if (name === "") {
-        alert("Please enter your name for the list");
+        $('#alertBar').html('<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span><span class="sr-only">Error:</span>Enter a valid list name');
+        $('#alertBar').fadeIn('fast');
     }
-    if (password === "") {
-        alert("Please enter a password for the list");
+    else if (password === "") {
+        $('#alertBar').html('<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span><span class="sr-only">Error:</span>Enter a valid password');
+        $('#alertBar').fadeIn('fast');
     }
     if (description === "") {
-        description = "None given...";
+        description = "";
     }
     if (name !== "" && password !== "") {
         $("#listBody").append("<tr><td><h5>" + name + "</h5></td><td><p class='help-block'>" + description + "</p></td>" + viewButton + editButton + "</tr>");
@@ -55,6 +58,7 @@ $("#addButton").click(function() {
         writeListData(name, description, password);
         count++;
         database.ref('count').set(count);
+        $('#alertBar').hide();
     }
 });
 $(document).on('click', '.editButton', function() {
@@ -93,7 +97,8 @@ function writeListData(name, description, password) {
       listName: name,
       description: description,
       password: password,
-      itemCount: 0
+      itemCount: 0,
+      deleted: false
   });
 }
 
