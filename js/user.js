@@ -92,6 +92,7 @@ $(document).on('click', '.deleteButton', function() {
     }
     database.ref('lists/' + listNum + '/listItems/item' + (itemCount-1)).remove();
     database.ref('lists/' + listNum + '/itemCount').set(itemCount -= 1);
+    location.reload();
 });
 $(document).on('click', '.deleteListButton', function() {
     BootstrapDialog.confirm({
