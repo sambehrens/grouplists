@@ -1,5 +1,5 @@
 .headingContainer {
-    margin-top: 7%;
+    margin-top: 180px;
     margin-bottom: 5%;
 }
 
@@ -68,7 +68,7 @@ table tr td:last-child {
 }
 
 @media print
-{    
+{
     #listContainer {
         margin-top: 8%;
         width: 90%;
