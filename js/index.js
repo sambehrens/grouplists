@@ -2,6 +2,10 @@ var database = firebase.database();
 var count = null;
 var ready = false;
 
+function hideBanner() {
+    $('#warning-banner').hide();
+}
+
 $(document).ready(function() {
     var countRef = database.ref('/count');
     countRef.on('value', function(snapshot) {
