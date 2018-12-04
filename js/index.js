@@ -2,10 +2,6 @@ var database = firebase.database();
 var count = null;
 var ready = false;
 
-function hideBanner() {
-    $('#warning-banner').hide();
-}
-
 $(document).ready(function() {
     var countRef = database.ref('/count');
     countRef.on('value', function(snapshot) {
@@ -105,6 +101,10 @@ function writeListData(name, description, password) {
       deleted: false
   });
 }
+
+$(document).on('click', '#hide-banner', function() {
+    $('#warning-banner').hide();
+});
 
 // bootstrap modal
 BootstrapDialog.DEFAULT_TEXTS[BootstrapDialog.TYPE_DEFAULT] = 'Information';
